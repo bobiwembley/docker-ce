@@ -1,0 +1,38 @@
+---
+ # tasks file for docker-ce
+ #
+ 
+ - name: add package daemon on servers
+   apt:
+    name:  "{{ item }}"
+    state: present
+   with_items:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+ 
+ - name: add apt key docker
+   apt_key:
+     url: https://download.docker.com/linux/ubuntu/gpg
+     state: present
+ 
+ - name: add apt repo
+   apt_repository:
+       repo: deb  https://download.docker.com/linux/ubuntu focal stable
+       state: present
+ 
+ - name: Update apt and install docker-ce
+   apt:
+     name: "{{ item }}"
+     state: latest
+     update_cache: yes
+   with_items:
+       - docker-ce
+       - docker-ce-cli
+ 
+ - name: start docker service
+   service:
+       name: docker
+       state: started
+       enabled: yes
